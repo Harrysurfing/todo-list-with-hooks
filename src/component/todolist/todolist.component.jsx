@@ -1,31 +1,29 @@
-import React, { useState, useContext } from "react";
-import TodoForm from "../todoform/todoform.component";
+import React, { useState } from "react";
 
-const TodoList = () => {
-	const [input, setInput] = useState("");
-	const [listItems, setListItems] = useState([]);
+const useInputValue = (initialValue) => {
+	const [input, setInput] = useState(initialValue);
+
+	return {
+		input,
+		onChange: (e) => setInput(e.target.value),
+		clearText: () => setInput(""),
+	};
+};
+const TodoList = ({ onSubmit }) => {
+	const { clearText, ...text } = useInputValue("");
 
 	return (
 		<div>
-			<input
-				value={input}
-				type="text"
-				name="todoinput"
-				onChange={(e) => {
-					setInput(e.target.value);
-					console.log(input);
-				}}
-			/>
-			<button
-				onClick={() => {
-					setListItems(listItems.push(input));
-					console.log(listItems);
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					onSubmit(text.input);
+					clearText();
 				}}
 			>
-				Add
-			</button>
-
-			<TodoForm listItems={listItems} />
+				<input value={text.input} onChange={text.onChange} />
+				<button type="submit">Add</button>
+			</form>
 		</div>
 	);
 };
